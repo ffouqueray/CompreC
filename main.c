@@ -56,7 +56,6 @@ int main(int argc, char* argv[]) {
         switch (opt) {
             case 'o':
                 archive = optarg;
-                printf("%s", archive);
                 break;
             case 'v':
                 verbose = 1;
