@@ -18,6 +18,9 @@ struct zip* open_zip_with_password(const char *archive, const char *password) {
 
     // On recupere tous les fichiers presents dans l'archive et on essaie de les dechiffrer avec le mdp qu'on a donne
     int num_files = zip_get_num_entries(za, 0);
+    if (verbose == 1) {
+        printf("Trying password '%s'\n", guess);
+    }
     for(int i = 0; i < num_files; i++) {
         const char *name = zip_get_name(za, i, 0);
 
@@ -63,9 +66,6 @@ char* brute_force_attack(const char *archive, int max_length) {
         guess[length] = '\0';
 
         do {
-            if (verbose == 1) {
-                printf("Trying password '%s'\n", guess);
-            }
             za = open_zip_with_password(archive, guess);
             if (za != NULL) {
                 return guess;  // Password is correct, return it.
