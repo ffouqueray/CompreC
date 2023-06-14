@@ -106,7 +106,6 @@ int main(int argc, char* argv[]) {
 
         // Si on a passe un mot de passe en dur
         if (pwd != NULL) {
-            printf("Trying to open with the provided password.\n");
             za = open_zip_with_password(archive, pwd);
             if (za == NULL) {
                 printf("Could not open the zip using password '%s'.\n", pwd);
