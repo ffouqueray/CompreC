@@ -28,7 +28,7 @@ Tout ceci est possible via un "shell" interactif recréé en C. Une commande hel
   - `sudo apt update && sudo apt upgrade`
   - `sudo apt install build-essential libzip-dev -y`
 - Compiler le code source en faisant la commande suivante :
-  - `gcc fonctions/*.c main.c -lzip -o main.exe`
+  - `gcc fonctions/*.c main.c -lzip -lm -o main.exe`
 --------------
 ## Bug connu 
 - Il n'est pas possible de modifier l'archive (import et rm) depuis une archive chiffrée. C'est une limitation de la librairie libzip
