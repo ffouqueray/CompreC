@@ -23,7 +23,7 @@
 // Commande qui affiche le help message si jamais on lance le programme avec le -h ou seul
 void help(char *argv[]) {
     printf(
-        "Usage: %s [OPTION]... [FILE]...\nOptions:\n\t-h, --help\t\t\tShow this help\n\t-o, --open\t\t\tOpen a zip file for browsing (necessary)\n\t-b, --bruteforce\t\tTry to bruteforce the password\n\t-d, --dictionary FILE\t\tTry to bruteforce the password with a dictionary\n\t-p, --password PASSWORD\t\tUse this password\n\t-v, --verbose\t\t\tTo active verbose mode\nExamples :\n\t%s -o --password MyPassword my-archive.zip\n\t%s -o -b -d my-text-dictionary.txt my-archive.zip\n",
+        "Usage: %s [OPTION]... [FILE]...\nOptions:\n\t-h, --help\t\t\tShow this help\n\t-o, --open\t\t\tOpen a zip file for browsing (necessary)\n\t-b, --bruteforce\t\tTry to bruteforce the password\n\t-d, --dictionary FILE\t\tTry to bruteforce the password with a dictionary\n\t-p, --password PASSWORD\t\tUse this password\n\t-v, --verbose\t\t\tTo active verbose mode\n\t-t, --threads THREADS\t\tNumber of threads to use to try the brute force\nExamples :\n\t%s -o --password MyPassword my-archive.zip\n\t%s -o -b -d my-text-dictionary.txt my-archive.zip\n",
         argv[0],
         argv[0],
         argv[0]
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
     struct zip_stat sb;
     int err;
     char *archive = NULL, *dict_file = NULL, *pwd = NULL;
-    int encrypted = 0, bruteforce = 0, done = 0;
+    int encrypted = 0, bruteforce = 0, done = 0, threads = 1;
     int opt;
 
     // Structure de notre getopt avec les formats courts et longs
@@ -44,6 +44,7 @@ int main(int argc, char* argv[]) {
         {"bruteforce",  no_argument,       0, 'b'},
         {"dictionary",  required_argument, 0, 'd'},
         {"password",    required_argument, 0, 'p'},
+        {"threads",     required_argument, 0, 't'},
         {"help",        no_argument,       0, 'h'},
         {"verbose",     no_argument,       0, 'v'},
         {0, 0, 0, 0}
@@ -52,7 +53,7 @@ int main(int argc, char* argv[]) {
     int long_index = 0;
 
     // Arguments de notre getopt
-    while ((opt = getopt_long(argc, argv, "o:bd:vp:h", long_options, &long_index)) != -1) {
+    while ((opt = getopt_long(argc, argv, "o:bd:vp:t:h", long_options, &long_index)) != -1) {
         switch (opt) {
             case 'o':
                 archive = optarg;
@@ -68,6 +69,9 @@ int main(int argc, char* argv[]) {
                 break;
             case 'p':
                 pwd = optarg;
+                break;
+            case 't':
+                threads = atoi(optarg);
                 break;
             case 'h':
                 help(argv);
@@ -143,7 +147,7 @@ int main(int argc, char* argv[]) {
         // Si on a passe notre argument pour du bruteforce
         if (bruteforce  && done == 0) {
             char *mot_de_passe;
-            mot_de_passe = brute_force_attack(archive, 15);  // Le 15 est la longueur max du mot de passe, on peut le readapter pour le passer en argument getopt
+            mot_de_passe = brute_force_attack(archive, threads);
             if (mot_de_passe != NULL) {
                 za = open_zip_with_password(archive, mot_de_passe);
                 printf("The password '%s' is correct\nOpening the ZIP file...\n", mot_de_passe);
@@ -151,7 +155,7 @@ int main(int argc, char* argv[]) {
                 navigate(za, (char *) archive);
                 done = 1;
             } else {
-                printf("Could not bruteforce the zip password using the maximum 15 characteres.\n");
+                printf("Could not bruteforce password.\n");
             }
         }
 
