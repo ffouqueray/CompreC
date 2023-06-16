@@ -14,7 +14,7 @@ extern int verbose;
 
 // Code de la commande "help"
 void cmd_help() {
-    printf("Commands :\n\thelp\t\tshow this command\n\tcd\t\tto go in a directory / go out of a directory\n\tls\t\tto show the content of a directory\n\texport\t\tto export a file or a directory out of the zip\n\timport\t\tto import a file or a directory from the computer to the zip.\t\t\t\t\t(Unencrypted ZIPs only)\n\trm\t\tto remove a file or a directory from the zip (a rm command will close the archive after use).\t(Unencrypted ZIPs only)\nExamples :\n\tls\n\tTo show the content of the current directory\n\n\tcd test folder\n\tTo go to the folder named \"test folder\"\n\n\tcd ..\n\tTo go to the parent folder\n\n\texport filename in zip*destination path\n\tTo export the file named \"filename in zip\" in the path \"destination path\"\n\n\timport folder\n\tTo import all content of the directory named \"folder\" in you current path\n\n\trm folder\n\tTo remove all content of the directory named \"folder\" and the folder itself\n");
+    printf("Commands :\n\thelp\t\tshow this command\n\tcd\t\tto go in a directory / go out of a directory\n\tls\t\tto show the content of a directory\n\texport\t\tto export a file or a directory out of the zip\n\timport\t\tto import a file or a directory from the computer to the zip.\t\t\t\t\t(Unencrypted ZIPs only)\n\trm\t\tto remove a file or a directory from the zip (a rm command will close the archive after use).\t(Unencrypted ZIPs only)\nExamples :\n\tls\n\tTo show the content of the current directory\n\n\tcd test folder\n\tTo go to the folder named \"test folder\"\n\n\tcd ..\n\tTo go to the parent folder\n\n\texport filename in zip*destination path\n\tTo export the file named \"filename in zip\" in the path \"destination path\"\n\n\texport filename in zip.txt\n\tTo export the file named \"filename in zip.txt\" in the path of the executable\n\n\timport folder\n\tTo import all content of the directory named \"folder\" in you current path\n\n\trm folder\n\tTo remove all content of the directory named \"folder\" and the folder itself\n");
 }
 
 
@@ -221,6 +221,9 @@ void cmd_export_recursive(struct zip *za, const char *filename_in_zip, const cha
 void cmd_import_recursive(struct zip *za, char *filename, char *prefix) {  
     // On recupere le chemin absolu de notre chemin relatif, et faisons une copie qui nous servira  
     char *dossier_de_base = getAbsolutePath(filename);
+    if (dossier_de_base == NULL) {
+        return;
+    }
     char *chemin_absolu = strdup(dossier_de_base);
 
     // On retire les \ et espaces de fin de notre chemin absolu
