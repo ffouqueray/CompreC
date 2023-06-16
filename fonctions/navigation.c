@@ -4,6 +4,7 @@
 
 #include "navigation.h"
 #include "shell_cmd.h"
+#include "shell_dependencies.h"
 #include "colors.h"
 
 char *global_pwd = NULL;
@@ -51,12 +52,16 @@ void navigate(struct zip *za, char *archive) {
             const char *filename_in_zip = command + 7;
             char *separator = strchr(filename_in_zip, '*');
             if (separator) {
-                // Cut the string at the separator and get the destination path
+                // On coupe en deux au separateur pour garder la suite dans une autre chaine
                 *separator = '\0';
                 const char *destination_path = separator + 1;
                 cmd_export_recursive(za, filename_in_zip, destination_path, prefix);
             } else {
-                printf("Invalid command format\nRefer to help command to get the right format\n");
+                // On recupere le chemin absolu du dossier de l'exe et on exporte vers ce dossier la
+                char here[3];
+                sprintf(here, ".%s", file_separator);
+                char *destination_path = getAbsolutePath(here);
+                cmd_export_recursive(za, filename_in_zip, destination_path, prefix);
             }
         }
 
